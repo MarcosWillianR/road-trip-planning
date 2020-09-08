@@ -10,7 +10,7 @@ const Map: React.FC = () => (
     }}
     mapContainerStyle={{
       width: '100%',
-      height: '100vh',
+      height: '100%',
     }}
   >
     {/* Child components, such as markers, info windows, etc. */}

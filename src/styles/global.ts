@@ -8,6 +8,10 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
 
+  html, body {
+    height: 100%;
+  }
+
   body {
     background: #fff;
     -webkit-font-smoothing: antialiased;
