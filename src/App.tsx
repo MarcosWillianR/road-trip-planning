@@ -1,14 +1,14 @@
 import React from 'react';
-import Geosuggest from 'react-geosuggest';
 
-import Map from './components/Map';
+import GlobalStyle from './styles/global';
+
+import Home from './pages/Home';
 
 const App: React.FC = () => (
-  <div>
-    <h1>Road Trip Plannig!</h1>
-    <Geosuggest />
-    <Map />
-  </div>
+  <>
+    <GlobalStyle />
+    <Home />
+  </>
 );
 
 export default App;
