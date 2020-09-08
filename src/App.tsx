@@ -1,5 +1,14 @@
 import React from 'react';
+import Geosuggest from 'react-geosuggest';
 
-const App: React.FC = () => <h1>Road Trip Plannig</h1>
+import Map from './components/Map';
+
+const App: React.FC = () => (
+  <div>
+    <h1>Road Trip Plannig!</h1>
+    <Geosuggest />
+    <Map />
+  </div>
+);
 
 export default App;
