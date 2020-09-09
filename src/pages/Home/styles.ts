@@ -4,6 +4,7 @@ import { shade } from 'polished';
 import {
   mainColor,
   textColor,
+  secondColor,
   titleColor,
   largeFontWeight,
 } from '../../styles/variables';
@@ -72,6 +73,11 @@ export const SelectDestinationContainer = styled.div`
 
     &:hover {
       background: ${shade(0.1, mainColor)};
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background: ${secondColor};
     }
 
     color: #fff;

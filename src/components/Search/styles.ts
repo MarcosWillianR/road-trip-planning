@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components';
 import { borderColor, mainColor, textColor } from '../../styles/variables';
 
-interface InputContainerProps {
+interface SearchContainerProps {
   isFocused: boolean;
 }
 
-export const InputContainer = styled.div<InputContainerProps>`
+export const SearchContainer = styled.div<SearchContainerProps>`
   width: 100%;
   position: relative;
 
@@ -37,7 +37,6 @@ export const InputContainer = styled.div<InputContainerProps>`
   svg {
     width: 22px;
     height: 22px;
-    color: ${(props) => (props.isFocused ? mainColor : textColor)};
   }
 
   .geosuggest {

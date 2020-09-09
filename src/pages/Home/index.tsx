@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiPlus } from 'react-icons/fi';
+import { useMapRoute } from '../../hooks/MapRouteContext';
 
 import Map from '../../components/Map';
 
-import PlacesInput from '../../components/PlacesInput';
+import Search from '../../components/Search';
 
 import {
   Container,
@@ -12,32 +13,40 @@ import {
   SelectDestinationContainer,
 } from './styles';
 
-const Home: React.FC = () => (
-  <Container>
-    <TripContent>
-      <header>
-        <h2>RoadTrip</h2>
-        <p>Escolha os melhores destinos para sua viagem</p>
-      </header>
+const Home: React.FC = () => {
+  const { addRide, isActiveAddRideButton } = useMapRoute();
 
-      <SelectDestinationContainer>
-        <h1>Informe uma rota de viagem</h1>
+  return (
+    <Container>
+      <TripContent>
+        <header>
+          <h2>RoadTrip</h2>
+          <p>Escolha os melhores destinos para sua viagem</p>
+        </header>
 
-        <PlacesInput />
+        <SelectDestinationContainer>
+          <h1>Informe uma rota de viagem</h1>
 
-        <PlacesInput />
+          <Search id="select-origin" placeholder="Origem" />
 
-        <button type="button">
-          <FiPlus />
-          Adicionar
-        </button>
-      </SelectDestinationContainer>
-    </TripContent>
+          <Search id="select-destiny" placeholder="Destino" />
 
-    <MapContent>
-      <Map />
-    </MapContent>
-  </Container>
-);
+          <button
+            disabled={!isActiveAddRideButton}
+            type="button"
+            onClick={() => addRide()}
+          >
+            <FiPlus />
+            Adicionar
+          </button>
+        </SelectDestinationContainer>
+      </TripContent>
+
+      <MapContent>
+        <Map />
+      </MapContent>
+    </Container>
+  );
+};
 
 export default Home;
