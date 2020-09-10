@@ -15,6 +15,7 @@ export const DestinationContainer = styled.div<DestinationContainerProps>`
   display: flex;
   align-items: center;
   position: relative;
+  border: 1px solid ${mainColor};
 
   overflow: hidden;
 
@@ -25,11 +26,11 @@ export const DestinationContainer = styled.div<DestinationContainerProps>`
     span,
     p {
       white-space: nowrap;
+      font-weight: ${mediumFontWeight};
     }
 
     span {
       color: ${whiteColor};
-      font-weight: ${mediumFontWeight};
     }
 
     p {
@@ -39,5 +40,23 @@ export const DestinationContainer = styled.div<DestinationContainerProps>`
     &:first-of-type {
       background: ${(props) => (props.isActive ? mainColor : secondColor)};
     }
+  }
+`;
+
+export const OriginContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  overflow: hidden;
+
+  background: ${whiteColor};
+  border: 1px solid ${mainColor};
+  padding: 12px;
+
+  p {
+    white-space: nowrap;
+    color: ${titleColor};
+    font-weight: ${mediumFontWeight};
   }
 `;
