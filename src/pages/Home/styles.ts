@@ -7,6 +7,7 @@ import {
   secondColor,
   titleColor,
   largeFontWeight,
+  borderColor,
 } from '../../styles/variables';
 
 export const Container = styled.main`
@@ -54,6 +55,17 @@ export const MapContent = styled.section`
 export const SelectDestinationContainer = styled.div`
   margin-top: 22px;
 
+  > div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+
+    &:first-of-type {
+      border-bottom: 1px solid ${borderColor};
+      padding-bottom: 32px;
+    }
+  }
+
   h1 {
     margin-bottom: 22px;
     font-size: 22px;
@@ -61,12 +73,16 @@ export const SelectDestinationContainer = styled.div`
   }
 
   button {
-    height: 40px;
-    margin-top: 22px;
-    padding: 0 22px;
+    height: 42px;
+    flex: 0 1 300px;
+    padding: 12px 22px;
+
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 
     display: flex;
     align-items: center;
+    justify-content: center;
 
     background: ${mainColor};
     transition: all 0.5s;

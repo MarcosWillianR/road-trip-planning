@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Input, { GeosuggestProps } from 'react-geosuggest';
 import { FiMapPin } from 'react-icons/fi';
 
@@ -17,7 +17,16 @@ interface SuggestRef extends Input {
   listId: string;
 }
 
-const Search: React.FC<GeosuggestProps> = ({ id, placeholder, ...rest }) => {
+interface SearchProps extends GeosuggestProps {
+  clearInput: boolean;
+}
+
+const Search: React.FC<SearchProps> = ({
+  id,
+  clearInput,
+  placeholder,
+  ...rest
+}) => {
   const inputRef = useRef<SuggestRef>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [isSuggestSelected, setIsSuggestSelected] = useState(false);
@@ -83,6 +92,14 @@ const Search: React.FC<GeosuggestProps> = ({ id, placeholder, ...rest }) => {
     [addCurrentRide],
   );
 
+  useEffect(() => {
+    if (clearInput) {
+      if (inputRef.current) {
+        inputRef.current.clear();
+      }
+    }
+  }, [clearInput]);
+
   return (
     <SearchContainer isFocused={isFocused}>
       <FiMapPin
@@ -94,6 +111,8 @@ const Search: React.FC<GeosuggestProps> = ({ id, placeholder, ...rest }) => {
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         autoComplete="off"
+        location={new window.google.maps.LatLng(-30.1596182, -51.1480951)}
+        radius={20}
         onSuggestSelect={handleSuggestSelected}
         ref={inputRef}
         {...rest}

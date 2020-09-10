@@ -1,50 +1,95 @@
-import React from 'react';
-import { InfoBox, DirectionsRenderer } from '@react-google-maps/api';
+import React, { useMemo } from 'react';
+import { Polyline, InfoBox, Marker } from '@react-google-maps/api';
 
-import { useMapRoute } from '../../hooks/MapRouteContext';
+import { DestinationContainer } from './styles';
 
-import { DestinationContainer, OriginContainer } from './styles';
-import { mainColor, secondColor } from '../../styles/variables';
+interface Ride {
+  name: string;
+  address: string;
+  shortAddress: string;
+  coords: {
+    lat: number;
+    lng: number;
+  };
+}
 
-const Direction: React.FC = () => {
-  const { rides } = useMapRoute();
+interface Stop {
+  id: string;
+  route: Ride;
+  duration: string;
+  distance: string;
+  path: {
+    lat(): number;
+    lng(): number;
+  }[];
+}
+
+interface Origin {
+  route: Ride;
+  path: {
+    lat(): number;
+    lng(): number;
+  }[];
+}
+
+interface DirectionProps {
+  destinations: Stop[];
+  origin: Origin;
+}
+
+const Direction: React.FC<DirectionProps> = ({ destinations, origin }) => {
   const infoBoxOptions = {
     closeBoxURL: '',
     enableEventPropagation: true,
+    disableAutoPan: true,
   };
+
+  const polylines = useMemo(() => {
+    const formattedPolylines: any = [];
+
+    formattedPolylines.push(...origin.path);
+
+    destinations.forEach(({ path }) => formattedPolylines.push(...path));
+
+    return formattedPolylines;
+  }, [destinations, origin.path]);
 
   return (
     <>
-      {rides.map((ride) => (
-        <div key={ride.id}>
-          <DirectionsRenderer
-            options={{
-              suppressMarkers: true,
-              directions: ride.directions,
-              polylineOptions: {
-                strokeColor: ride.is_active ? mainColor : secondColor,
-              },
-            }}
-          />
-          <InfoBox position={ride.origin.coords} options={infoBoxOptions}>
-            <OriginContainer>
-              <p>{ride.origin.shortAddress}</p>
-            </OriginContainer>
-          </InfoBox>
+      {polylines && (
+        <Polyline
+          path={polylines}
+          options={{
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeWeight: 2,
+            clickable: false,
+            draggable: false,
+            editable: false,
+            visible: true,
+            zIndex: 1,
+          }}
+        />
+      )}
+      {destinations.length > 0 &&
+        destinations.map((destination) => (
+          <Marker position={destination.route.coords}>
+            <InfoBox
+              position={destination.route.coords}
+              options={infoBoxOptions}
+            >
+              <DestinationContainer>
+                <div>
+                  <span>{destination.duration}</span>
+                </div>
 
-          <InfoBox options={infoBoxOptions} position={ride.destiny.coords}>
-            <DestinationContainer isActive={ride.is_active}>
-              <div>
-                <span>{ride.duration}</span>
-              </div>
-
-              <div>
-                <p>{ride.destiny.shortAddress}</p>
-              </div>
-            </DestinationContainer>
-          </InfoBox>
-        </div>
-      ))}
+                <div>
+                  <p>{destination.route.shortAddress}</p>
+                </div>
+              </DestinationContainer>
+            </InfoBox>
+          </Marker>
+        ))}
     </>
   );
 };

@@ -35,3 +35,21 @@ export const DestinationContainer = styled.div`
     }
   }
 `;
+
+export const OriginContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  overflow: hidden;
+
+  background: ${whiteColor};
+  border: 1px solid ${mainColor};
+  padding: 12px;
+
+  p {
+    white-space: nowrap;
+    color: ${titleColor};
+    font-weight: ${mediumFontWeight};
+  }
+`;

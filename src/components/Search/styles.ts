@@ -17,13 +17,11 @@ export const SearchContainer = styled.div<SearchContainerProps>`
   align-items: center;
   padding-left: 12px;
   border: 1px solid ${borderColor};
-  border-radius: 8px;
+  border-radius: 10px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 
   transition: all 0.5s;
-
-  &:hover {
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-  }
 
   ${(props) =>
     props.isFocused &&
@@ -62,10 +60,10 @@ export const SearchContainer = styled.div<SearchContainerProps>`
       top: 40px;
       left: 0;
 
-      ${(props) => props.isFocused &&
+      ${(props) =>
+        props.isFocused &&
         css`
           border: 1px solid ${borderColor};
-          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         `}
 
       border-radius: 8px;
