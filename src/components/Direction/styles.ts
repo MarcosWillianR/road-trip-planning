@@ -9,7 +9,7 @@ import {
 export const DestinationContainer = styled.div`
   display: flex;
   align-items: center;
-  position: relative;
+  justify-content: center;
   border: 1px solid ${mainColor};
 
   div {

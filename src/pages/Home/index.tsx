@@ -1,20 +1,28 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { FiMapPin } from 'react-icons/fi';
 
 import { useMapRoute } from '../../hooks/MapRouteContext';
 
 import Map from '../../components/Map';
-
 import Search from '../../components/Search';
+
+import { weatherIconUrl } from '../../utils';
 
 import {
   Container,
   MapContent,
   TripContent,
   SelectDestinationContainer,
+  OriginContainer,
+  OriginContent,
+  OriginIconContainer,
+  OriginWrapper,
+  WeatherContent,
 } from './styles';
 
 const Home: React.FC = () => {
   const {
+    origin,
     addNewOrigin,
     addNewDestination,
     isActiveAddRideOriginButton,
@@ -26,7 +34,7 @@ const Home: React.FC = () => {
     <Container>
       <TripContent>
         <header>
-          <h2>RoadTrip</h2>
+          <h3>RoadTrip</h3>
           <p>Escolha os melhores destinos para sua viagem</p>
         </header>
 
@@ -67,6 +75,50 @@ const Home: React.FC = () => {
             </button>
           </div>
         </SelectDestinationContainer>
+
+        {origin && (
+          <OriginContainer>
+            <h2>Origem atual</h2>
+
+            <OriginContent>
+              <OriginIconContainer>
+                <FiMapPin />
+              </OriginIconContainer>
+
+              <OriginWrapper>
+                <strong>{origin.route.name}</strong>
+
+                {!origin.weather.errorMessage ? (
+                  <WeatherContent>
+                    <div>
+                      {origin.weather.iconName && (
+                        <img
+                          src={weatherIconUrl(origin.weather.iconName)}
+                          alt={origin.weather.description}
+                        />
+                      )}
+                      <h3>{origin.weather.description}</h3>
+                    </div>
+
+                    <div>
+                      <strong>{`${origin.weather.temp}°`}</strong>
+                      <span>
+                        mínima
+                        {` ${origin.weather.temp_min}°`}
+                      </span>
+                      <span>
+                        máxima
+                        {` ${origin.weather.temp_max}°`}
+                      </span>
+                    </div>
+                  </WeatherContent>
+                ) : (
+                  <h2>{origin.weather.errorMessage}</h2>
+                )}
+              </OriginWrapper>
+            </OriginContent>
+          </OriginContainer>
+        )}
       </TripContent>
 
       <MapContent>

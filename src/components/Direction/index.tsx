@@ -1,7 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Polyline, InfoBox, Marker } from '@react-google-maps/api';
+import { FiMapPin } from 'react-icons/fi';
 
 import { DestinationContainer } from './styles';
+import { mainColor } from '../../styles/variables';
+
+import markerIcon from '../../assets/markerStops.png';
 
 interface Ride {
   name: string;
@@ -61,8 +65,8 @@ const Direction: React.FC<DirectionProps> = ({ destinations, origin }) => {
           path={polylines}
           options={{
             geodesic: true,
-            strokeColor: '#FF0000',
-            strokeWeight: 2,
+            strokeColor: mainColor,
+            strokeWeight: 3,
             clickable: false,
             draggable: false,
             editable: false,
@@ -71,9 +75,13 @@ const Direction: React.FC<DirectionProps> = ({ destinations, origin }) => {
           }}
         />
       )}
+
       {destinations.length > 0 &&
         destinations.map((destination) => (
-          <Marker position={destination.route.coords}>
+          <Marker
+            position={destination.route.coords}
+            options={{ icon: markerIcon }}
+          >
             <InfoBox
               position={destination.route.coords}
               options={infoBoxOptions}

@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import weatherAPI from '../services/WeatherApiClient';
+import weatherAPIService from '../services/WeatherApiClient';
 
 interface Ride {
   name: string;
@@ -20,8 +20,18 @@ interface Ride {
   };
 }
 
+interface WeatherResponse {
+  temp?: number;
+  temp_min?: number;
+  temp_max?: number;
+  description?: string;
+  iconName?: string;
+  errorMessage: string | null;
+}
+
 interface Origin {
   route: Ride;
+  weather: WeatherResponse;
   path: {
     lat(): number;
     lng(): number;
@@ -33,6 +43,7 @@ interface Stop {
   route: Ride;
   duration: string;
   distance: string;
+  weather: WeatherResponse;
   path: {
     lat(): number;
     lng(): number;
@@ -80,28 +91,77 @@ const MapRouteProvider: React.FC = ({ children }) => {
     destinyInput: false,
   });
 
-  const directionsService = useMemo(
-    () => new window.google.maps.DirectionsService(),
-    [],
-  );
-  const { DRIVING } = window.google.maps.TravelMode;
+  const weatherResponse = useCallback(async ({ lat, lon }): Promise<
+    WeatherResponse
+  > => {
+    try {
+      const { data } = await weatherAPIService.get('weather', {
+        params: {
+          lat,
+          lon,
+          appid: process.env.REACT_APP_WEATHER_API_KEY,
+          lang: 'pt_br',
+        },
+      });
 
-  const addNewOrigin = useCallback(() => {
+      const {
+        main: { temp, temp_min, temp_max },
+        weather,
+      } = data;
+
+      return {
+        errorMessage: null,
+        description: weather[0].description,
+        iconName: weather[0].icon,
+        temp: Math.floor(temp - 273.15),
+        temp_max: Math.floor(temp_max - 273.15),
+        temp_min: Math.floor(temp_min - 273.15),
+      };
+    } catch (err) {
+      return {
+        errorMessage: 'Temperatura não informada',
+      };
+    }
+  }, []);
+
+  const addNewOrigin = useCallback(async () => {
     if (currentRide) {
       const { origin: currentRideOrigin } = currentRide;
 
       if (currentRideOrigin) {
+        const directionsService = new window.google.maps.DirectionsService();
+
         directionsService.route(
           {
             origin: currentRideOrigin.coords,
             destination: currentRideOrigin.coords,
-            travelMode: DRIVING,
+            travelMode: window.google.maps.TravelMode.DRIVING,
           },
-          (result, status) => {
+          async (result, status) => {
             if (status === 'OK') {
+              const {
+                errorMessage,
+                description,
+                iconName,
+                temp,
+                temp_max,
+                temp_min,
+              } = await weatherResponse({
+                lat: currentRideOrigin.coords.lat,
+                lon: currentRideOrigin.coords.lng,
+              });
+
               setOrigin({
                 path: result.routes[0].overview_path,
                 route: currentRideOrigin,
+                weather: {
+                  errorMessage,
+                  description,
+                  iconName,
+                  temp,
+                  temp_max,
+                  temp_min,
+                },
               });
               setDestinations([]);
             }
@@ -111,39 +171,36 @@ const MapRouteProvider: React.FC = ({ children }) => {
         setClearInputs({ originInput: true });
       }
     }
-  }, [currentRide, directionsService, DRIVING]);
-
-  const weatherResponse = useCallback(async ({ lat, lon }) => {
-    try {
-      const response = await weatherAPI.get('weather', {
-        params: {
-          lat,
-          lon,
-          appid: process.env.REACT_APP_WEATHER_API_KEY,
-          lang: 'pt_br',
-        },
-      });
-
-      console.log('response: ', response);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+  }, [currentRide, weatherResponse]);
 
   const addNewDestination = useCallback(async () => {
     if (currentRide) {
       const { destiny, origin: currentRideOrigin } = currentRide;
 
       if (destiny && currentRideOrigin) {
+        const directionsService = new window.google.maps.DirectionsService();
+
         if (currentStop) {
           directionsService.route(
             {
               origin: currentStop.coords,
               destination: destiny.coords,
-              travelMode: DRIVING,
+              travelMode: window.google.maps.TravelMode.DRIVING,
             },
-            (result, status) => {
+            async (result, status) => {
               if (status === 'OK') {
+                const {
+                  errorMessage,
+                  description,
+                  iconName,
+                  temp,
+                  temp_max,
+                  temp_min,
+                } = await weatherResponse({
+                  lat: currentRideOrigin.coords.lat,
+                  lon: currentRideOrigin.coords.lng,
+                });
+
                 setDestinations((state) => [
                   ...state,
                   {
@@ -152,6 +209,14 @@ const MapRouteProvider: React.FC = ({ children }) => {
                     path: result.routes[0].overview_path,
                     distance: result.routes[0].legs[0].distance.text,
                     duration: result.routes[0].legs[0].duration.text,
+                    weather: {
+                      errorMessage,
+                      description,
+                      iconName,
+                      temp,
+                      temp_max,
+                      temp_min,
+                    },
                   },
                 ]);
 
@@ -165,10 +230,22 @@ const MapRouteProvider: React.FC = ({ children }) => {
             {
               origin: currentRideOrigin.coords,
               destination: destiny.coords,
-              travelMode: DRIVING,
+              travelMode: window.google.maps.TravelMode.DRIVING,
             },
-            (result, status) => {
+            async (result, status) => {
               if (status === 'OK') {
+                const {
+                  errorMessage,
+                  description,
+                  iconName,
+                  temp,
+                  temp_max,
+                  temp_min,
+                } = await weatherResponse({
+                  lat: currentRideOrigin.coords.lat,
+                  lon: currentRideOrigin.coords.lng,
+                });
+
                 setDestinations((state) => [
                   ...state,
                   {
@@ -177,6 +254,14 @@ const MapRouteProvider: React.FC = ({ children }) => {
                     path: result.routes[0].overview_path,
                     distance: result.routes[0].legs[0].distance.text,
                     duration: result.routes[0].legs[0].duration.text,
+                    weather: {
+                      errorMessage,
+                      description,
+                      iconName,
+                      temp,
+                      temp_max,
+                      temp_min,
+                    },
                   },
                 ]);
 
@@ -188,7 +273,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
         }
       }
     }
-  }, [currentRide, directionsService, DRIVING, currentStop]);
+  }, [currentRide, currentStop, weatherResponse]);
 
   const addCurrentRide = useCallback((ride: Ride | null, type: string) => {
     if (type === 'geosuggest__list--select-origin') {

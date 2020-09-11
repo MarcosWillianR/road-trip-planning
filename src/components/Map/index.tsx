@@ -5,6 +5,8 @@ import { useMapRoute } from '../../hooks/MapRouteContext';
 
 import Direction from '../Direction';
 
+import markerIcon from '../../assets/marker.png';
+
 import { OriginContainer } from './styles';
 
 interface CenterState {
@@ -103,7 +105,7 @@ const Map: React.FC = () => {
       }}
     >
       {origin && (
-        <Marker position={origin.route.coords}>
+        <Marker position={origin.route.coords} options={{ icon: markerIcon }}>
           <InfoBox position={origin.route.coords} options={infoBoxOptions}>
             <OriginContainer>
               <p>{origin.route.shortAddress}</p>
