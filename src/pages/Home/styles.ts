@@ -117,7 +117,7 @@ export const SelectDestinationContainer = styled.div`
 
 export const OriginContainer = styled.div`
   max-width: 550px;
-  margin: 0 auto;
+  margin: 0 auto 60px auto;
 `;
 
 export const OriginContent = styled.button`
@@ -146,10 +146,12 @@ export const OriginIconContainer = styled.div`
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 
-  svg {
-    width: 32px;
-    height: 32px;
-    color: ${mainColor};
+  span {
+    width: 40px;
+    height: 40px;
+    border: 13px solid ${secondColor};
+    background: ${mainColor};
+    box-shadow: 0 0 0 2px ${mainColor};
   }
 `;
 
@@ -213,6 +215,46 @@ export const WeatherContent = styled.div`
       font-size: 14px;
       color: ${whiteColor};
       margin-top: 2px;
+    }
+  }
+`;
+
+export const DestinationsContainerList = styled.ul`
+  max-width: 550px;
+  margin: 0 auto;
+  list-style: none;
+
+  li {
+    > button:last-of-type {
+      width: 100%;
+      border-radius: 10px;
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+
+      transition: all 0.5s;
+      position: relative;
+      top: -10px;
+      opacity: 0;
+      background: ${mainColor};
+
+      svg {
+        width: 22px;
+        height: 22px;
+        color: ${whiteColor};
+      }
+
+      &:hover {
+        background: ${shade(0.1, mainColor)};
+      }
+    }
+
+    & + li {
+      margin-top: 22px;
+    }
+
+    &:hover button {
+      opacity: 1;
+      top: 0;
     }
   }
 `;

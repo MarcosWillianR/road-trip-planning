@@ -60,6 +60,13 @@ interface ClearInputState {
   destinyInput?: boolean;
 }
 
+interface MapCenter {
+  coords: {
+    lat: number;
+    lng: number;
+  };
+}
+
 interface MapRouteContextData {
   addCurrentRide(ride: Ride | null, type: string): void;
   addNewOrigin(): void;
@@ -70,6 +77,11 @@ interface MapRouteContextData {
   destinations: Stop[];
   currentStop: Ride | null;
   clearInputs: ClearInputState;
+  changeMapZoom(zoom: number): void;
+  changeMapCenter(data: MapCenter): void;
+  changeMapElement(map: google.maps.Map): void;
+  mapZoom: number;
+  mapCenter: MapCenter;
 }
 
 const MapRouteContext = createContext<MapRouteContextData>(
@@ -82,6 +94,9 @@ const MapRouteProvider: React.FC = ({ children }) => {
   const [currentRide, setCurrentRide] = useState<CurrentRideState | null>(null);
   const [destinations, setDestinations] = useState<Stop[]>([] as Stop[]);
   const [isActiveAddStopButton, setIsActiveAddStopButton] = useState(false);
+  const [mapZoom, setMapZoom] = useState(8);
+  const [mapElement, setMapElement] = useState<google.maps.Map | null>(null);
+  const [mapCenter, setMapCenter] = useState<MapCenter>({} as MapCenter);
   const [
     isActiveAddRideOriginButton,
     setIsActiveAddRideOriginButton,
@@ -283,6 +298,24 @@ const MapRouteProvider: React.FC = ({ children }) => {
     }
   }, []);
 
+  const changeMapZoom = useCallback((zoom: number) => {
+    setMapZoom(zoom);
+  }, []);
+
+  const changeMapCenter = useCallback(
+    ({ coords }: MapCenter) => {
+      if (mapElement) {
+        mapElement.panTo(coords);
+        setMapCenter({ coords });
+      }
+    },
+    [mapElement],
+  );
+
+  const changeMapElement = useCallback((map: google.maps.Map) => {
+    setMapElement(map);
+  }, []);
+
   useEffect(() => {
     if (currentRide?.origin) {
       setIsActiveAddRideOriginButton(true);
@@ -310,6 +343,11 @@ const MapRouteProvider: React.FC = ({ children }) => {
       destinations,
       currentStop,
       clearInputs,
+      changeMapZoom,
+      changeMapCenter,
+      changeMapElement,
+      mapZoom,
+      mapCenter,
     }),
     [
       addCurrentRide,
@@ -321,6 +359,11 @@ const MapRouteProvider: React.FC = ({ children }) => {
       destinations,
       currentStop,
       clearInputs,
+      changeMapZoom,
+      changeMapCenter,
+      changeMapElement,
+      mapZoom,
+      mapCenter,
     ],
   );
 

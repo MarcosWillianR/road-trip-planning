@@ -2,8 +2,9 @@ import React, { memo, useEffect, useState, useCallback } from 'react';
 import { GoogleMap, Marker, InfoBox } from '@react-google-maps/api';
 
 import { useMapRoute } from '../../hooks/MapRouteContext';
+import { smoothZoom } from '../../utils/mapUtils';
 
-import Direction from '../Direction';
+import Polyline from '../Polyline';
 
 import markerIcon from '../../assets/marker.png';
 
@@ -15,12 +16,21 @@ interface CenterState {
 }
 
 const Map: React.FC = () => {
-  const { origin, destinations, currentStop } = useMapRoute();
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const {
+    origin,
+    mapZoom,
+    mapCenter,
+    destinations,
+    currentStop,
+    changeMapElement,
+    changeMapCenter,
+    changeMapZoom,
+  } = useMapRoute();
   const [center, setCenter] = useState<CenterState>({
     lat: -30.1596182,
     lng: -51.1480951,
   });
+  const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const infoBoxOptions = {
     closeBoxURL: '',
@@ -28,77 +38,59 @@ const Map: React.FC = () => {
     disableAutoPan: true,
   };
 
-  const smoothZoom = useCallback(
-    (
-      mapElement: google.maps.Map,
-      level: number,
-      cnt: number,
-      zoomIn: boolean,
-    ) => {
-      if (zoomIn) {
-        if (cnt >= level) {
-          return;
-        }
-
-        const zoomEvent = window.google.maps.event.addListener(
-          mapElement,
-          'zoom_changed',
-          () => {
-            window.google.maps.event.removeListener(zoomEvent);
-
-            smoothZoom(mapElement, level, cnt + 1, true);
-          },
-        );
-
-        setTimeout(() => mapElement.setZoom(cnt), 80);
-      } else {
-        if (cnt <= level) {
-          return;
-        }
-
-        const zoomEvent = window.google.maps.event.addListener(
-          mapElement,
-          'zoom_changed',
-          () => {
-            window.google.maps.event.removeListener(zoomEvent);
-
-            smoothZoom(mapElement, level, cnt - 1, false);
-          },
-        );
-
-        setTimeout(() => mapElement.setZoom(cnt), 80);
-      }
-    },
-    [],
-  );
-
   useEffect(() => {
     if (origin) {
-      if (map) {
-        smoothZoom(map, 16, map.getZoom(), true);
+      changeMapZoom(16);
 
-        map.panTo(origin.route.coords);
-      }
+      changeMapCenter({
+        coords: origin.route.coords,
+      });
     }
-  }, [origin, map, smoothZoom]);
+  }, [origin, changeMapZoom, changeMapCenter]);
 
   useEffect(() => {
     if (currentStop) {
-      if (map) {
-        smoothZoom(map, 11, map.getZoom(), false);
+      changeMapZoom(11);
 
-        map.panTo(currentStop.coords);
+      changeMapCenter({
+        coords: currentStop.coords,
+      });
+    }
+  }, [currentStop, changeMapZoom, changeMapCenter]);
+
+  const handleMapElement = useCallback(
+    (mapElement) => {
+      changeMapElement(mapElement);
+      setMap(mapElement);
+    },
+    [changeMapElement],
+  );
+
+  useEffect(() => {
+    if (mapZoom) {
+      if (map) {
+        smoothZoom({
+          actualMapZoom: map.getZoom(),
+          mapElement: map,
+          zoom: mapZoom,
+          zoomType: map.getZoom() >= mapZoom ? 'zoomOut' : 'zoomIn',
+        });
       }
     }
-  }, [currentStop, smoothZoom, map]);
+  }, [mapZoom, map]);
 
   return (
     <GoogleMap
       id="google-map"
       zoom={8}
-      onLoad={(mapElement) => setMap(mapElement)}
+      onZoomChanged={() => {
+        if (map) {
+          changeMapZoom(map.getZoom());
+        }
+      }}
+      onLoad={handleMapElement}
       options={{ disableDefaultUI: true }}
-      center={center}
+      center={center || mapCenter.coords}
       mapContainerStyle={{
         width: '100%',
         height: '100%',
@@ -115,7 +107,7 @@ const Map: React.FC = () => {
       )}
 
       {destinations.length > 0 && origin && (
-        <Direction destinations={destinations} origin={origin} />
+        <Polyline destinations={destinations} origin={origin} />
       )}
     </GoogleMap>
   );

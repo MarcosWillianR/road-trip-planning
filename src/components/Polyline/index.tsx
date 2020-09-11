@@ -1,6 +1,5 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { Polyline, InfoBox, Marker } from '@react-google-maps/api';
-import { FiMapPin } from 'react-icons/fi';
 
 import { DestinationContainer } from './styles';
 import { mainColor } from '../../styles/variables';
@@ -36,12 +35,15 @@ interface Origin {
   }[];
 }
 
-interface DirectionProps {
+interface PolylineComponentProps {
   destinations: Stop[];
   origin: Origin;
 }
 
-const Direction: React.FC<DirectionProps> = ({ destinations, origin }) => {
+const PolylineComponent: React.FC<PolylineComponentProps> = ({
+  destinations,
+  origin,
+}) => {
   const infoBoxOptions = {
     closeBoxURL: '',
     enableEventPropagation: true,
@@ -102,4 +104,4 @@ const Direction: React.FC<DirectionProps> = ({ destinations, origin }) => {
   );
 };
 
-export default Direction;
+export default PolylineComponent;

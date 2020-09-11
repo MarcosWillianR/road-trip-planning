@@ -1,10 +1,12 @@
-import React from 'react';
-import { FiMapPin } from 'react-icons/fi';
+import React, { useEffect, useState, useCallback } from 'react';
+import { FiChevronDown } from 'react-icons/fi';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 import { useMapRoute } from '../../hooks/MapRouteContext';
 
 import Map from '../../components/Map';
 import Search from '../../components/Search';
+import Destinations, { Stop } from '../../components/Destinations';
 
 import { weatherIconUrl } from '../../utils';
 
@@ -18,17 +20,26 @@ import {
   OriginIconContainer,
   OriginWrapper,
   WeatherContent,
+  DestinationsContainerList,
 } from './styles';
 
 const Home: React.FC = () => {
+  const [isActive, setIsActive] = useState('');
   const {
     origin,
+    destinations,
     addNewOrigin,
     addNewDestination,
     isActiveAddRideOriginButton,
+    changeMapZoom,
+    changeMapCenter,
     isActiveAddStopButton,
     clearInputs,
   } = useMapRoute();
+
+  const handleToggleActive = useCallback((id: string) => {
+    setIsActive((state) => (state === id ? '' : id));
+  }, []);
 
   return (
     <Container>
@@ -80,9 +91,14 @@ const Home: React.FC = () => {
           <OriginContainer>
             <h2>Origem atual</h2>
 
-            <OriginContent>
+            <OriginContent
+              onClick={() => {
+                changeMapZoom(16);
+                changeMapCenter({ coords: origin.route.coords });
+              }}
+            >
               <OriginIconContainer>
-                <FiMapPin />
+                <span />
               </OriginIconContainer>
 
               <OriginWrapper>
@@ -119,6 +135,40 @@ const Home: React.FC = () => {
             </OriginContent>
           </OriginContainer>
         )}
+
+        <Scrollbars
+          autoHeight
+          autoHeightMin={330}
+          autoHide
+          renderThumbVertical={(...props) => (
+            <div
+              style={{
+                borderRadius: 8,
+                backgroundColor: '#623cea',
+                cursor: 'pointer',
+              }}
+              {...props}
+            />
+          )}
+        >
+          <DestinationsContainerList>
+            {destinations.length > 0 &&
+              destinations.map((destination) => (
+                <li>
+                  <Destinations
+                    destiny={destination as Stop}
+                    isActive={isActive === destination.id}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleToggleActive(destination.id)}
+                  >
+                    <FiChevronDown />
+                  </button>
+                </li>
+              ))}
+          </DestinationsContainerList>
+        </Scrollbars>
       </TripContent>
 
       <MapContent>
