@@ -30,7 +30,7 @@ const Search: React.FC<SearchProps> = ({
   const inputRef = useRef<SuggestRef>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [isSuggestSelected, setIsSuggestSelected] = useState(false);
-  const { addCurrentRide } = useMapRoute();
+  const { addCurrentRide, mapCenter } = useMapRoute();
 
   const handleSuggestSelected = useCallback(
     (suggest) => {
@@ -111,7 +111,12 @@ const Search: React.FC<SearchProps> = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         autoComplete="off"
-        location={new window.google.maps.LatLng(-30.1596182, -51.1480951)}
+        location={
+          new window.google.maps.LatLng(
+            mapCenter?.coords?.lat,
+            mapCenter?.coords?.lng,
+          ) || undefined
+        }
         radius={20}
         onSuggestSelect={handleSuggestSelected}
         ref={inputRef}

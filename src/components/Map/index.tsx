@@ -20,13 +20,13 @@ const Map: React.FC = () => {
     origin,
     mapZoom,
     mapCenter,
+    setCenter,
     destinations,
     currentStop,
     changeMapElement,
     changeMapCenter,
     changeMapZoom,
   } = useMapRoute();
-  const [center, setCenter] = useState<CenterState>({} as CenterState);
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const infoBoxOptions = {
@@ -40,14 +40,18 @@ const Map: React.FC = () => {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
           setCenter({
-            lat: coords.latitude,
-            lng: coords.longitude,
+            coords: {
+              lat: coords.latitude,
+              lng: coords.longitude,
+            },
           });
         },
         () => {
           setCenter({
-            lat: -14.235004,
-            lng: -51.92528,
+            coords: {
+              lat: -14.235004,
+              lng: -51.92528,
+            },
           });
         },
       );
@@ -106,7 +110,7 @@ const Map: React.FC = () => {
       }}
       onLoad={handleMapElement}
       options={{ disableDefaultUI: true }}
-      center={center || mapCenter.coords}
+      center={mapCenter.coords}
       mapContainerStyle={{
         width: '100%',
         height: '100%',

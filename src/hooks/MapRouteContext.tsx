@@ -90,6 +90,7 @@ interface MapRouteContextData {
   mapCenter: MapCenter;
   removeDestinationFromList(data: RemoveDestinationFromList): void;
   removeCurrentOrigin(): void;
+  setCenter(data: MapCenter): void;
   isLoadingOrigin: boolean;
   isLoadingDestinations: boolean;
 }
@@ -147,6 +148,10 @@ const MapRouteProvider: React.FC = ({ children }) => {
         errorMessage: 'Temperatura não informada',
       };
     }
+  }, []);
+
+  const setCenter = useCallback((centerCoords: MapCenter) => {
+    setMapCenter(centerCoords);
   }, []);
 
   const addNewOrigin = useCallback(async () => {
@@ -410,6 +415,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
       removeCurrentOrigin,
       isLoadingOrigin,
       isLoadingDestinations,
+      setCenter,
     }),
     [
       addCurrentRide,
@@ -430,6 +436,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
       removeCurrentOrigin,
       isLoadingOrigin,
       isLoadingDestinations,
+      setCenter,
     ],
   );
 

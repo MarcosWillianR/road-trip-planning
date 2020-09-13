@@ -181,7 +181,8 @@ export const TripContentDetailsMobile = styled.div<TripContentDetailsProps>`
   height: 100vh;
   background: ${whiteColor};
 
-  position: relative;
+  position: fixed;
+  bottom: 0;
   z-index: 99999;
 
   ${(props) =>
