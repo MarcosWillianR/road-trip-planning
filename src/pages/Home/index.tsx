@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { FiChevronDown } from 'react-icons/fi';
+import { FiChevronDown, FiTrash2 } from 'react-icons/fi';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 import { useMapRoute } from '../../hooks/MapRouteContext';
@@ -19,9 +19,11 @@ import {
   OriginContent,
   OriginIconContainer,
   OriginWrapper,
+  RemoveOriginButton,
   WeatherContent,
   DestinationsContainerList,
 } from './styles';
+import { TripContentMobile } from './stylesMobile';
 
 const Home: React.FC = () => {
   const [isActive, setIsActive] = useState('');
@@ -35,6 +37,7 @@ const Home: React.FC = () => {
     changeMapCenter,
     isActiveAddStopButton,
     clearInputs,
+    removeCurrentOrigin,
   } = useMapRoute();
 
   const handleToggleActive = useCallback((id: string) => {
@@ -50,23 +53,27 @@ const Home: React.FC = () => {
         </header>
 
         <SelectDestinationContainer>
-          <h1>Informe uma rota de viagem</h1>
+          {!origin && (
+            <>
+              <h1>Informe uma rota de viagem</h1>
 
-          <div>
-            <Search
-              clearInput={!!clearInputs.originInput}
-              id="select-origin"
-              placeholder="Origem"
-            />
+              <div>
+                <Search
+                  clearInput={!!clearInputs.originInput}
+                  id="select-origin"
+                  placeholder="Origem"
+                />
 
-            <button
-              disabled={!isActiveAddRideOriginButton}
-              type="button"
-              onClick={() => addNewOrigin()}
-            >
-              Adicionar origem
-            </button>
-          </div>
+                <button
+                  disabled={!isActiveAddRideOriginButton}
+                  type="button"
+                  onClick={() => addNewOrigin()}
+                >
+                  Adicionar origem
+                </button>
+              </div>
+            </>
+          )}
 
           <h1>Informe uma ou mais paradas</h1>
 
@@ -132,6 +139,9 @@ const Home: React.FC = () => {
                   <h2>{origin.weather.errorMessage}</h2>
                 )}
               </OriginWrapper>
+              <RemoveOriginButton onClick={() => removeCurrentOrigin()}>
+                <FiTrash2 />
+              </RemoveOriginButton>
             </OriginContent>
           </OriginContainer>
         )}
@@ -170,6 +180,10 @@ const Home: React.FC = () => {
           </DestinationsContainerList>
         </Scrollbars>
       </TripContent>
+
+      {/* <TripContentMobile>
+        <h1>EITA PREULA...</h1>
+      </TripContentMobile> */}
 
       <MapContent>
         <Map />

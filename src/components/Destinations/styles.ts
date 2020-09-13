@@ -9,25 +9,23 @@ import {
   titleColor,
 } from '../../styles/variables';
 
-interface ContainerListItemProps {
+interface DestinationProps {
   isActive: boolean;
 }
 
-export const ContainerListItem = styled.button<ContainerListItemProps>`
+export const Container = styled.div<DestinationProps>`
   width: 100%;
   height: 60px;
 
   border-radius: 10px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
-  background: ${secondColor};
   box-shadow: 0 1px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.5s;
   display: flex;
 
   &:hover {
     box-shadow: 0 1px 12px rgba(0, 0, 0, 0.2);
-    background: ${shade(0.1, secondColor)};
   }
 
   ${(props) =>
@@ -35,6 +33,18 @@ export const ContainerListItem = styled.button<ContainerListItemProps>`
     css`
       height: 150px;
     `}
+`;
+
+export const ContainerListItem = styled.button<DestinationProps>`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: ${secondColor};
+  border-top-left-radius: 10px;
+
+  &:hover {
+    background: ${shade(0.1, secondColor)};
+  }
 
   > strong {
     align-items: center;
@@ -50,7 +60,7 @@ export const ContainerListItem = styled.button<ContainerListItemProps>`
   }
 `;
 
-export const DestinyIconContainer = styled.div<ContainerListItemProps>`
+export const DestinyIconContainer = styled.div<DestinationProps>`
   ${(props) => (props.isActive ? 'flex: 1' : 'width: 80px;')};
   height: 100%;
   display: flex;
@@ -70,7 +80,7 @@ export const DestinyIconContainer = styled.div<ContainerListItemProps>`
   }
 `;
 
-export const DestinyContent = styled.div<ContainerListItemProps>`
+export const DestinyContent = styled.div<DestinationProps>`
   ${(props) => (!props.isActive ? 'display: none' : 'display: flex')};
 
   ${(props) =>
@@ -161,5 +171,23 @@ export const WeatherAndDurationContent = styled.div`
         border-top: 1px solid ${mainColor};
       }
     }
+  }
+`;
+
+export const RemoveDestinyButton = styled.button.attrs({
+  type: 'button',
+})`
+  padding: 0 12px;
+  background: ${mainColor};
+  border-top-right-radius: 10px;
+
+  &:hover {
+    background: ${shade(0.1, mainColor)};
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+    color: ${whiteColor};
   }
 `;

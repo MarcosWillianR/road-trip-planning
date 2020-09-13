@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import weatherAPIService from '../services/WeatherApiClient';
 
 interface Ride {
+  id: string;
   name: string;
   address: string;
   shortAddress: string;
@@ -67,8 +68,13 @@ interface MapCenter {
   };
 }
 
+interface RemoveDestinationFromList {
+  stopId?: string;
+  rideId?: string;
+}
+
 interface MapRouteContextData {
-  addCurrentRide(ride: Ride | null, type: string): void;
+  addCurrentRide(ride: Omit<Ride, 'id'> | null, type: string): void;
   addNewOrigin(): void;
   addNewDestination(): void;
   isActiveAddRideOriginButton: boolean;
@@ -82,6 +88,8 @@ interface MapRouteContextData {
   changeMapElement(map: google.maps.Map): void;
   mapZoom: number;
   mapCenter: MapCenter;
+  removeDestinationFromList(data: RemoveDestinationFromList): void;
+  removeCurrentOrigin(): void;
 }
 
 const MapRouteContext = createContext<MapRouteContextData>(
@@ -110,7 +118,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
     WeatherResponse
   > => {
     try {
-      const { data } = await weatherAPIService.get('weather', {
+      const { data } = await weatherAPIService.get('weather@ERROR_API', {
         params: {
           lat,
           lon,
@@ -118,12 +126,10 @@ const MapRouteProvider: React.FC = ({ children }) => {
           lang: 'pt_br',
         },
       });
-
       const {
         main: { temp, temp_min, temp_max },
         weather,
       } = data;
-
       return {
         errorMessage: null,
         description: weather[0].description,
@@ -212,8 +218,8 @@ const MapRouteProvider: React.FC = ({ children }) => {
                   temp_max,
                   temp_min,
                 } = await weatherResponse({
-                  lat: currentRideOrigin.coords.lat,
-                  lon: currentRideOrigin.coords.lng,
+                  lat: destiny.coords.lat,
+                  lon: destiny.coords.lng,
                 });
 
                 setDestinations((state) => [
@@ -257,8 +263,8 @@ const MapRouteProvider: React.FC = ({ children }) => {
                   temp_max,
                   temp_min,
                 } = await weatherResponse({
-                  lat: currentRideOrigin.coords.lat,
-                  lon: currentRideOrigin.coords.lng,
+                  lat: destiny.coords.lat,
+                  lon: destiny.coords.lng,
                 });
 
                 setDestinations((state) => [
@@ -290,13 +296,24 @@ const MapRouteProvider: React.FC = ({ children }) => {
     }
   }, [currentRide, currentStop, weatherResponse]);
 
-  const addCurrentRide = useCallback((ride: Ride | null, type: string) => {
-    if (type === 'geosuggest__list--select-origin') {
-      setCurrentRide((state) => ({ ...state, origin: ride }));
-    } else {
-      setCurrentRide((state) => ({ ...state, destiny: ride }));
-    }
-  }, []);
+  const addCurrentRide = useCallback(
+    (ride: Omit<Ride, 'id'> | null, type: string) => {
+      if (ride) {
+        if (type === 'geosuggest__list--select-origin') {
+          setCurrentRide((state) => ({
+            ...state,
+            origin: { ...ride, id: uuidv4() },
+          }));
+        } else {
+          setCurrentRide((state) => ({
+            ...state,
+            destiny: { ...ride, id: uuidv4() },
+          }));
+        }
+      }
+    },
+    [],
+  );
 
   const changeMapZoom = useCallback((zoom: number) => {
     setMapZoom(zoom);
@@ -316,12 +333,42 @@ const MapRouteProvider: React.FC = ({ children }) => {
     setMapElement(map);
   }, []);
 
+  const removeDestinationFromList = useCallback(
+    ({ stopId, rideId }: RemoveDestinationFromList) => {
+      if (stopId) {
+        setDestinations((state) =>
+          state.filter((destiny) => destiny.id !== stopId),
+        );
+      }
+
+      if (rideId) {
+        if (currentStop?.id === rideId) {
+          setCurrentStop(null);
+        }
+      }
+    },
+    [currentStop],
+  );
+
+  const removeCurrentOrigin = useCallback(() => {
+    setOrigin(null);
+  }, []);
+
   useEffect(() => {
-    if (currentRide?.origin) {
-      setIsActiveAddRideOriginButton(true);
+    if (destinations.length > 0) {
+      if (!currentStop) {
+        setCurrentStop(destinations[destinations.length - 1].route);
+      }
+    }
+  }, [destinations, currentStop]);
+
+  useEffect(() => {
+    if (!currentRide?.origin) {
+      setIsActiveAddRideOriginButton(false);
       setClearInputs({ originInput: false });
     } else {
-      setIsActiveAddRideOriginButton(false);
+      setIsActiveAddRideOriginButton(true);
+      setClearInputs({ originInput: true });
     }
 
     if (currentRide?.destiny && origin) {
@@ -329,6 +376,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
       setIsActiveAddStopButton(true);
     } else {
       setIsActiveAddStopButton(false);
+      setClearInputs({ destinyInput: true });
     }
   }, [currentRide, origin]);
 
@@ -348,6 +396,8 @@ const MapRouteProvider: React.FC = ({ children }) => {
       changeMapElement,
       mapZoom,
       mapCenter,
+      removeDestinationFromList,
+      removeCurrentOrigin,
     }),
     [
       addCurrentRide,
@@ -364,6 +414,8 @@ const MapRouteProvider: React.FC = ({ children }) => {
       changeMapElement,
       mapZoom,
       mapCenter,
+      removeDestinationFromList,
+      removeCurrentOrigin,
     ],
   );
 

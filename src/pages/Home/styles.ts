@@ -18,11 +18,23 @@ export const Container = styled.main`
 
   display: flex;
   justify-content: space-between;
+
+  @media screen and (max-width: 960px) {
+    flex-direction: column;
+  }
 `;
 
 export const TripContent = styled.section`
   flex: 0 1 650px;
   padding: 22px;
+
+  @media screen and (max-width: 960px) {
+    display: none;
+  }
+
+  @media screen and (max-width: 1200px) {
+    flex: 1;
+  }
 
   header {
     width: 100%;
@@ -59,6 +71,10 @@ export const TripContent = styled.section`
 
 export const MapContent = styled.section`
   flex: 1;
+
+  @media screen and (max-width: 960px) {
+    order: 1;
+  }
 `;
 
 export const SelectDestinationContainer = styled.div`
@@ -173,6 +189,25 @@ export const OriginWrapper = styled.div`
     font-size: 18px;
     color: ${titleColor};
     margin-top: 22px;
+  }
+`;
+
+export const RemoveOriginButton = styled.button.attrs({
+  type: 'button',
+})`
+  height: 100%;
+  padding: 0 12px;
+  background: ${mainColor};
+  border-top-right-radius: 10px;
+
+  &:hover {
+    background: ${shade(0.1, mainColor)};
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+    color: ${whiteColor};
   }
 `;
 
