@@ -45,7 +45,10 @@ const Map: React.FC = () => {
           });
         },
         () => {
-          console.error('Passageiro negou a solicatação de localização');
+          setCenter({
+            lat: -14.235004,
+            lng: -51.92528,
+          });
         },
       );
     }
