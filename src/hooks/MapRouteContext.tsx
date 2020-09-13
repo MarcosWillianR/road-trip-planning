@@ -90,6 +90,8 @@ interface MapRouteContextData {
   mapCenter: MapCenter;
   removeDestinationFromList(data: RemoveDestinationFromList): void;
   removeCurrentOrigin(): void;
+  isLoadingOrigin: boolean;
+  isLoadingDestinations: boolean;
 }
 
 const MapRouteContext = createContext<MapRouteContextData>(
@@ -98,9 +100,11 @@ const MapRouteContext = createContext<MapRouteContextData>(
 
 const MapRouteProvider: React.FC = ({ children }) => {
   const [origin, setOrigin] = useState<Origin | null>(null);
+  const [isLoadingOrigin, setIsLoadingOrigin] = useState(false);
   const [currentStop, setCurrentStop] = useState<Ride | null>(null);
   const [currentRide, setCurrentRide] = useState<CurrentRideState | null>(null);
   const [destinations, setDestinations] = useState<Stop[]>([] as Stop[]);
+  const [isLoadingDestinations, setIsLoadingDestinations] = useState(false);
   const [isActiveAddStopButton, setIsActiveAddStopButton] = useState(false);
   const [mapZoom, setMapZoom] = useState(8);
   const [mapElement, setMapElement] = useState<google.maps.Map | null>(null);
@@ -147,6 +151,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
 
   const addNewOrigin = useCallback(async () => {
     if (currentRide) {
+      setIsLoadingOrigin(true);
       const { origin: currentRideOrigin } = currentRide;
 
       if (currentRideOrigin) {
@@ -185,6 +190,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
                 },
               });
               setDestinations([]);
+              setIsLoadingOrigin(false);
             }
           },
         );
@@ -200,6 +206,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
 
       if (destiny && currentRideOrigin) {
         const directionsService = new window.google.maps.DirectionsService();
+        setIsLoadingDestinations(true);
 
         if (currentStop) {
           directionsService.route(
@@ -243,6 +250,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
 
                 setCurrentStop(destiny);
                 setClearInputs({ destinyInput: true });
+                setIsLoadingDestinations(false);
               }
             },
           );
@@ -288,6 +296,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
 
                 setCurrentStop(destiny);
                 setClearInputs({ destinyInput: true });
+                setIsLoadingDestinations(false);
               }
             },
           );
@@ -399,6 +408,8 @@ const MapRouteProvider: React.FC = ({ children }) => {
       mapCenter,
       removeDestinationFromList,
       removeCurrentOrigin,
+      isLoadingOrigin,
+      isLoadingDestinations,
     }),
     [
       addCurrentRide,
@@ -417,6 +428,8 @@ const MapRouteProvider: React.FC = ({ children }) => {
       mapCenter,
       removeDestinationFromList,
       removeCurrentOrigin,
+      isLoadingOrigin,
+      isLoadingDestinations,
     ],
   );
 

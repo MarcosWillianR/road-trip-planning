@@ -14,6 +14,7 @@ import Map from '../../components/Map';
 import Search from '../../components/Search';
 import Destinations, { Stop } from '../../components/Destinations';
 import DestinationsMobile from '../../components/Destinations/Mobile';
+import Loading from '../../components/Loading';
 
 import { weatherIconUrl } from '../../utils';
 
@@ -51,7 +52,9 @@ const Home: React.FC = () => {
   ] = useState(false);
   const {
     origin,
+    isLoadingOrigin,
     destinations,
+    isLoadingDestinations,
     addNewOrigin,
     addNewDestination,
     isActiveAddRideOriginButton,
@@ -115,6 +118,8 @@ const Home: React.FC = () => {
             </button>
           </div>
         </SelectDestinationContainer>
+
+        {isLoadingOrigin && <Loading />}
 
         {origin && (
           <OriginContainer>
@@ -184,6 +189,8 @@ const Home: React.FC = () => {
           )}
         >
           <DestinationsContainerList>
+            {isLoadingDestinations && <Loading />}
+
             {destinations.length > 0 &&
               destinations.map((destination) => (
                 <li>
@@ -292,6 +299,8 @@ const Home: React.FC = () => {
               </>
             )}
 
+            {isLoadingOrigin && <Loading size={28} borderWidth={3} />}
+
             <h1>Informe uma ou mais paradas</h1>
 
             <div>
@@ -312,6 +321,8 @@ const Home: React.FC = () => {
           </SelectDestinationContainerMobile>
 
           <DestinationsContainerListMobile>
+            {isLoadingDestinations && <Loading size={28} borderWidth={3} />}
+
             {destinations.length > 0 &&
               destinations.map((destination) => (
                 <DestinationsMobile destiny={destination as Stop} />
