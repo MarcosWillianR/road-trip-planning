@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { FiChevronDown, FiTrash2 } from 'react-icons/fi';
+import {
+  FiChevronDown,
+  FiTrash2,
+  FiList,
+  FiMap,
+  FiMapPin,
+} from 'react-icons/fi';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 import { useMapRoute } from '../../hooks/MapRouteContext';
@@ -7,6 +13,7 @@ import { useMapRoute } from '../../hooks/MapRouteContext';
 import Map from '../../components/Map';
 import Search from '../../components/Search';
 import Destinations, { Stop } from '../../components/Destinations';
+import DestinationsMobile from '../../components/Destinations/Mobile';
 
 import { weatherIconUrl } from '../../utils';
 
@@ -23,10 +30,25 @@ import {
   WeatherContent,
   DestinationsContainerList,
 } from './styles';
-import { TripContentMobile } from './stylesMobile';
+import {
+  TripContentMobile,
+  TripContentDetailsMobile,
+  DestinationsMapListContainerMobile,
+  DestinationsMapListContentMobile,
+  OpenContentDetailsMobileButton,
+  SelectDestinationContainerMobile,
+  DestinationsContainerListMobile,
+  CloseContentDetailsMobileButton,
+  OriginContainerMobile,
+} from './stylesMobile';
 
 const Home: React.FC = () => {
   const [isActive, setIsActive] = useState('');
+  const [activeMobileRoute, setActiveMobileRoute] = useState('');
+  const [
+    isActiveTripContentDetailsMobile,
+    setIsActiveTripContentDetailsMobile,
+  ] = useState(false);
   const {
     origin,
     destinations,
@@ -181,9 +203,128 @@ const Home: React.FC = () => {
         </Scrollbars>
       </TripContent>
 
-      {/* <TripContentMobile>
-        <h1>EITA PREULA...</h1>
-      </TripContentMobile> */}
+      <TripContentMobile>
+        {origin && (
+          <OriginContainerMobile>
+            <button
+              type="button"
+              onClick={() => {
+                changeMapZoom(16);
+                changeMapCenter({ coords: origin.route.coords });
+              }}
+            >
+              <strong>Origem atual: </strong>
+              <span>{origin.route.shortAddress}</span>
+            </button>
+
+            <button type="button" onClick={() => removeCurrentOrigin()}>
+              <FiTrash2 />
+            </button>
+          </OriginContainerMobile>
+        )}
+
+        <DestinationsMapListContainerMobile>
+          {destinations.length > 0 &&
+            destinations.map((destination) => (
+              <DestinationsMapListContentMobile
+                onClick={() => {
+                  changeMapZoom(16);
+                  changeMapCenter({ coords: destination.route.coords });
+                  setActiveMobileRoute(destination.id);
+                }}
+                isActive={activeMobileRoute === destination.id}
+              >
+                <h3>
+                  <FiMapPin />
+                  {destination.route.name}
+                </h3>
+                <p>{destination.route.address}</p>
+
+                <div>
+                  <strong>
+                    <span>kilômetros: </span>
+                    {destination.distance}
+                  </strong>
+
+                  <strong>
+                    <span>tempo: </span>
+                    {destination.duration}
+                  </strong>
+                </div>
+              </DestinationsMapListContentMobile>
+            ))}
+        </DestinationsMapListContainerMobile>
+
+        <OpenContentDetailsMobileButton
+          onClick={() => setIsActiveTripContentDetailsMobile(true)}
+          isActive={isActiveTripContentDetailsMobile}
+        >
+          <FiList />
+          Ver destinos
+        </OpenContentDetailsMobileButton>
+
+        <TripContentDetailsMobile isActive={isActiveTripContentDetailsMobile}>
+          <header>
+            <h3>RoadTrip</h3>
+            <p>Escolha os melhores destinos para sua viagem</p>
+          </header>
+
+          <SelectDestinationContainerMobile>
+            {!origin && (
+              <>
+                <h1>Informe uma rota de viagem</h1>
+
+                <div>
+                  <Search
+                    clearInput={!!clearInputs.originInput}
+                    id="select-origin"
+                    placeholder="Origem"
+                  />
+
+                  <button
+                    disabled={!isActiveAddRideOriginButton}
+                    type="button"
+                    onClick={() => addNewOrigin()}
+                  >
+                    Adicionar origem
+                  </button>
+                </div>
+              </>
+            )}
+
+            <h1>Informe uma ou mais paradas</h1>
+
+            <div>
+              <Search
+                clearInput={!!clearInputs.destinyInput}
+                id="select-destiny"
+                placeholder="Destino"
+              />
+
+              <button
+                disabled={!isActiveAddStopButton}
+                type="button"
+                onClick={() => addNewDestination()}
+              >
+                Adicionar parada
+              </button>
+            </div>
+          </SelectDestinationContainerMobile>
+
+          <DestinationsContainerListMobile>
+            {destinations.length > 0 &&
+              destinations.map((destination) => (
+                <DestinationsMobile destiny={destination as Stop} />
+              ))}
+          </DestinationsContainerListMobile>
+          <CloseContentDetailsMobileButton
+            onClick={() => setIsActiveTripContentDetailsMobile(false)}
+          >
+            <FiMap />
+            Ver mapa
+          </CloseContentDetailsMobileButton>
+        </TripContentDetailsMobile>
+      </TripContentMobile>
 
       <MapContent>
         <Map />

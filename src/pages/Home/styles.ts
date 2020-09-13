@@ -257,7 +257,6 @@ export const WeatherContent = styled.div`
 export const DestinationsContainerList = styled.ul`
   max-width: 550px;
   margin: 0 auto;
-  list-style: none;
 
   li {
     > button:last-of-type {

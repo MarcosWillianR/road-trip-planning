@@ -352,6 +352,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
 
   const removeCurrentOrigin = useCallback(() => {
     setOrigin(null);
+    setDestinations([]);
   }, []);
 
   useEffect(() => {
