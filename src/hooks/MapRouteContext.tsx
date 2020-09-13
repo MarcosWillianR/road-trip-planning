@@ -122,7 +122,7 @@ const MapRouteProvider: React.FC = ({ children }) => {
     WeatherResponse
   > => {
     try {
-      const { data } = await weatherAPIService.get('weather@ERROR_API', {
+      const { data } = await weatherAPIService.get('weather', {
         params: {
           lat,
           lon,
