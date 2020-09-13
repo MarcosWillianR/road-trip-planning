@@ -26,10 +26,7 @@ const Map: React.FC = () => {
     changeMapCenter,
     changeMapZoom,
   } = useMapRoute();
-  const [center, setCenter] = useState<CenterState>({
-    lat: -30.1596182,
-    lng: -51.1480951,
-  });
+  const [center, setCenter] = useState<CenterState>({} as CenterState);
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const infoBoxOptions = {
@@ -37,6 +34,22 @@ const Map: React.FC = () => {
     enableEventPropagation: true,
     disableAutoPan: true,
   };
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          setCenter({
+            lat: coords.latitude,
+            lng: coords.longitude,
+          });
+        },
+        () => {
+          console.error('Passageiro negou a solicatação de localização');
+        },
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (origin) {

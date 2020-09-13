@@ -83,6 +83,7 @@ const PolylineComponent: React.FC<PolylineComponentProps> = ({
           <Marker
             position={destination.route.coords}
             options={{ icon: markerIcon }}
+            key={destination.id}
           >
             <InfoBox
               position={destination.route.coords}

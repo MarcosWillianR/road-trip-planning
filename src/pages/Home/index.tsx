@@ -193,7 +193,7 @@ const Home: React.FC = () => {
 
             {destinations.length > 0 &&
               destinations.map((destination) => (
-                <li>
+                <li key={destination.id}>
                   <Destinations
                     destiny={destination as Stop}
                     isActive={isActive === destination.id}
@@ -239,6 +239,7 @@ const Home: React.FC = () => {
                   changeMapCenter({ coords: destination.route.coords });
                   setActiveMobileRoute(destination.id);
                 }}
+                key={destination.id}
                 isActive={activeMobileRoute === destination.id}
               >
                 <h3>
@@ -325,7 +326,10 @@ const Home: React.FC = () => {
 
             {destinations.length > 0 &&
               destinations.map((destination) => (
-                <DestinationsMobile destiny={destination as Stop} />
+                <DestinationsMobile
+                  key={destination.id}
+                  destiny={destination as Stop}
+                />
               ))}
           </DestinationsContainerListMobile>
           <CloseContentDetailsMobileButton
