@@ -41,11 +41,11 @@ Além disto é bom ter um editor para trabalhar com o código como [VSCode](http
 - Será necessário uma chave de cada uma das seguintes API's:
 * **Google API** e **Weather API**
 
-### Para conseguir uma chave da **API do Google** basta [clicar aqui](https://cloud.google.com/cloud-console), cadastrar uma conta e criar uma nova chave na aba **credenciais**, vai ser preciso também ativar as seguintes API's: **Places API,** **Maps JavaScript API,** **Directions API e** **Geocoding API.**
+Para conseguir uma chave da **API do Google** basta [clicar aqui](https://cloud.google.com/cloud-console), cadastrar uma conta e criar uma nova chave na aba **credenciais**, vai ser preciso também ativar as seguintes API's: **Places API,** **Maps JavaScript API,** **Directions API e** **Geocoding API.**
 
-### Para conseguir uma chave do **Weather API** basta [clicar aqui](https://openweathermap.org/api), cadastrar uma conta e criar uma nova chave.
+Para conseguir uma chave do **Weather API** basta [clicar aqui](https://openweathermap.org/api), cadastrar uma conta e criar uma nova chave.
 
-- Com as API's KEY em mãos você precisará criar um arquivo **.env** e definir as variáveis necessárias para o correto funcionamento da aplicação, utilize o **.env.example** para se guiar.
+- Com as chaves em mãos você precisará criar um arquivo **.env** e definir as variáveis necessárias para o correto funcionamento da aplicação, utilize o **.env.example** para se guiar.
 
 #### 🧭 Rodando a aplicação web (Frontend)
 
