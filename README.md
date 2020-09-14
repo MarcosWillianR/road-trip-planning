@@ -18,18 +18,14 @@
 
 ### Web / Responsivo **(Imagens)**
 
-<h4 align="center">
-	🚧  Em construção, volte mais tarde... 🚧
-</h4>
-
-<!-- <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="RoadTrip" title="#RoadTrip" src="src/assets/desktop.gif" width="800px">
+<p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
+  <img alt="RoadTrip" title="#RoadTrip" src="src/assets/desktop.gif" width="1000px">
 </p>
 
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="RoadTrip" title="#RoadTrip" src="mobile1.png" width="400px">
-  <img alt="RoadTrip" title="#RoadTrip" src="mobile1.png" width="400px">
-</p> -->
+  <img alt="RoadTrip" title="#RoadTrip" src="src/assets/mobile1.png" width="350px">
+  <img alt="RoadTrip" title="#RoadTrip" src="src/assets/mobile2.png" width="350px" style="margin-left: 22px">
+</p>
 
 
 ### Pré-requisitos
